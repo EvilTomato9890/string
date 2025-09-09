@@ -16,7 +16,6 @@ int main() {
 	fgets(str3, 5, stdin);
 	printf("%s", str3);
 }
-
 ssize_t Getline(char **lineptr, size_t *n, FILE *stream) {
     LOGGER_DEBUG("getline started");
     hard_assert(lineptr != nullptr, "Pointer to string is nullptr");
@@ -25,6 +24,7 @@ ssize_t Getline(char **lineptr, size_t *n, FILE *stream) {
     int ch = 0;
     size_t curr_size = *n;
     size_t numChars = 0;
+    bool is_malloc_used = 0;
     char *ptr;
 
     if (*lineptr == nullptr) {
@@ -32,6 +32,7 @@ ssize_t Getline(char **lineptr, size_t *n, FILE *stream) {
         LOGGER_DEBUG("Memory allocation started, trying to malloc %ld bytes", curr_size);
         *lineptr = (char *)malloc(curr_size);
         if (*lineptr == nullptr) return -1;
+        is_malloc_used = 1;
         *n = curr_size;
     }
 
@@ -42,7 +43,10 @@ ssize_t Getline(char **lineptr, size_t *n, FILE *stream) {
             curr_size *= 2;
             LOGGER_DEBUG("Memory reallocation started, trying to realloc %ld bytes", curr_size);
             char *new_ptr = (char *)realloc(*lineptr, curr_size);
-            if (new_ptr == nullptr) return -1;
+            if (new_ptr == nullptr) {
+            	if (is_malloc_used) free(*lineptr);
+            	return -1;
+            }
             *lineptr = new_ptr;
             ptr = *lineptr + numChars; 
             *n = curr_size;
@@ -54,7 +58,10 @@ ssize_t Getline(char **lineptr, size_t *n, FILE *stream) {
         if (ch == '\n') break;
     }
 
-    if (numChars == 0 && ch == EOF) return -1;
+    if (numChars == 0 && ch == EOF) {
+    	if (is_malloc_used) free(*lineptr);
+    	return -1;
+    }
 
     *ptr = '\0'; 
     return numChars;
