@@ -11,16 +11,10 @@ int main() {
 	char str2[] = "543210";
 	strncpy(str1, str2, 7);
 	LOGGER_DEBUG("ALL OK");
-	printf("%s", str1); /*
-	char *testi = (char*)calloc(10, 1);
-	char *str_test = nullptr;
-	size_t n = 1;
-	Getline(&testi, &n, stdin);
-	printf("%li\n", n);
-	free(str_test);
-	free(testi);
-	char str_test2222[] = "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg";
-	printf("%li", strlen(str_test2222));*/
+	printf("%s", str1); 
+	char str3[5] = {};
+	fgets(str3, 5, stdin);
+	printf("%s", str3);
 }
 
 ssize_t Getline(char **lineptr, size_t *n, FILE *stream) {
@@ -66,21 +60,22 @@ ssize_t Getline(char **lineptr, size_t *n, FILE *stream) {
     return numChars;
 }
 
-char *strdup(const char *str) {
+char* strdup(const char *str) {
 	char *dupplicate = (char*)malloc((strlen(str) + 1)*sizeof(char));
 	strcpy(dupplicate, str);
 	return dupplicate;
 }
 
-char *fgets(char *str, int numChars, FILE *stream) {
+char* fgets(char *str, int numChars, FILE *stream) {
 	LOGGER_DEBUG("strcat started");
 	hard_assert(str != nullptr, "str is nullptr");
 	hard_assert(stream != nullptr, "stream is nullptr");
 	int ch = 0;
-	while ((ch = getc(stream)) != EOF) {
+	while ((ch = getc(stream)) != EOF && ch != '\n' && numChars > 1) {
 		numChars--;
 		*(str++) = ch;
 	}
+	*(str++) = '\0';
 	if (ferror(stream)) {
 		return NULL;
 	}
@@ -93,7 +88,7 @@ char* strncat(char* destin, const char* source, size_t num) {
 	hard_assert(source != nullptr, "source is nullptr");
 	char* temp = destin;
 	while (*destin != '\0') destin++;
-	while (*source != '\0' and num > 0) {
+	while (*source != '\0' && num > 0) {
 		num--;
 		*(destin++) = *(source++);
 	}
@@ -111,7 +106,7 @@ char* strncpy(char* destin, const char* source, size_t num) {
 	hard_assert(destin != nullptr, "destination is nullptr");
 	hard_assert(source != nullptr, "source is nullptr");
 	char *temp = destin;
-	while (*source != '\0' and num > 0) {
+	while (*source != '\0' && num > 0) {
 		*(destin++) = *(source++);
 		num--;
 	}
@@ -138,8 +133,7 @@ const char* strchr(const char* str, char ch) { //Почему в оригина�
 	hard_assert(str != nullptr, "str is nullptr");
 	LOGGER_DEBUG("strchr started");
 	while(*str != '\0') {
-		if(*str == ch) return str;
-		str++;
+		if(*(str++) == ch) return str;
 	}
 
 	LOGGER_WARNING("%c not found", ch);
