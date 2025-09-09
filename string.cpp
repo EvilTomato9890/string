@@ -1,25 +1,17 @@
 #include <stdio.h>
+#include <stdint.h>
 #include "asserts.h"
 #include "logger.h"
 #include "test_part.h"
 #include "input.h"
 #include "string.h"
-//#include <string.h>
-const char* strchr(const char* str, char ch);
-int puts(const char* str);
-size_t strlen(const char* str);
-char* strcpy(char* destin, const char* source);
-char* strncpy(char* destin, const char* source, size_t num );
-char* strcat (char* destination, const char* source);
-char* strncat(char* destin, const char* source, size_t num);
-ssize_t Getline(char **lineptr, size_t *n, FILE *stream);
 int main() {
 	logger_initialize_stream(NULL); 
-	//char str1[] = "12345";
-	//char str2[] = "543210";
-	//strncpy(str1, str2, 7);
+	char str1[] = "12345";
+	char str2[] = "543210";
+	strncpy(str1, str2, 7);
 	LOGGER_DEBUG("ALL OK");
-	//printf("%s", str1);
+	printf("%s", str1); /*
 	char *testi = (char*)calloc(10, 1);
 	char *str_test = nullptr;
 	size_t n = 1;
@@ -28,7 +20,7 @@ int main() {
 	free(str_test);
 	free(testi);
 	char str_test2222[] = "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg";
-	printf("%li", strlen(str_test2222));
+	printf("%li", strlen(str_test2222));*/
 }
 
 ssize_t Getline(char **lineptr, size_t *n, FILE *stream) {
@@ -110,19 +102,8 @@ char* strncat(char* destin, const char* source, size_t num) {
 
 
 char* strcat(char* destin, const char* source) {
-	LOGGER_DEBUG("strcat started");
-	hard_assert(destin != nullptr, "destination is nullptr");
-	hard_assert(source != nullptr, "source is nullptr");
-	char* temp = destin;
-	while (*destin != '\0') destin++;
-	while (*source != '\0') {
-		*(destin++) = *(source++);
-	}
-	return temp;
+	return strncat(destin, source, SIZE_MAX);
 }
-
-
-//Почему такой баг не работает с strcpy
 
 
 char* strncpy(char* destin, const char* source, size_t num) {
@@ -139,14 +120,7 @@ char* strncpy(char* destin, const char* source, size_t num) {
 
 
 char* strcpy(char* destin, const char* source) {
-	LOGGER_DEBUG("strcpy started");
-	hard_assert(destin != nullptr, "destination is nullptr");
-	hard_assert(source != nullptr, "source is nullptr");
-	char *temp = destin;
-	while (*source != '\0') {
-		*(destin++) = *(source++);
-	}
-	return temp;
+	return strncpy(destin, source, SIZE_MAX);
 }
 
 size_t strlen(const char* str) {
